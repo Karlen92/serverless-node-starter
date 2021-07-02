@@ -10,7 +10,7 @@ once done with current task call ```sls remove``` to free up the space
 1. To use the template use following command -- 
 ```
   npm install -g serverless
-  serverless install --url https://github.com/devrefactory-tracfone/node-js-template.git --name <projectName>
+  serverless install --url https://github.com/Karlen92/serverless-node-starter.git --name <projectName>
   cd <projectName>
   npm install
 ```
