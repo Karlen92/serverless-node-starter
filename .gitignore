@@ -1,0 +1,21 @@
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+
+# Local directories
+.dynamodb
+.webpack
+.vscode
+.idea
+
+# env file
+.env*
+
+# macOS
+**/.DS_Store
+
+# Test
+coverage
