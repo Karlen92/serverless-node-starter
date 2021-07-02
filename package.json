@@ -1,0 +1,50 @@
+{
+  "name": "devrefactory-lambda-template",
+  "version": "1.0.0",
+  "description": "Serverless template",
+  "main": "handler.js",
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "<rootDir>/**/*.js",
+      "!<rootDir>/**/*.config.js",
+      "!<rootDir>/tests/**",
+      "!<rootDir>/coverage/**",
+      "!<rootDir>/node_modules/**"
+    ],
+    "verbose": true
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test"
+    }
+  },
+  "author": "Karlen Mkrtchyan",
+  "license": "MIT",
+  "dependencies": {
+    "aws-xray-sdk-core": "^3.2.0",
+    "babel-loader": "^8.2.0",
+    "pino": "^6.11.0",
+    "regenerator-runtime": "^0.13.7",
+    "webpack": "^5.15.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.11.5",
+    "@types/jest": "^26.0.13",
+    "babel-jest": "^26.3.0",
+    "eslint": "^7.8.1",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "jest": "^26.4.2",
+    "husky": "^4.3.0",
+    "prettier": "^2.1.1",
+    "serverless-webpack": "^5.3.5",
+    "serverless-offline": "^6.7.0",
+    "serverless-pseudo-parameters": "^2.5.0"
+  }
+}

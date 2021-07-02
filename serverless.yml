@@ -1,0 +1,84 @@
+service: devrefactory-lambda-template # Project name
+
+plugins:
+  - serverless-webpack # Package our functions with Webpack
+  - serverless-offline # Run locally
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, self:custom.developerStage}
+  region: ${env:AWS_DEFAULT_REGION, 'us-east-1'}
+  tracing:
+    apiGateway: true
+    lambda: true
+  environment:
+     DEMO_ENV: "this env variable is available for all lambdas in this yml"
+  apiGateway:
+    restApiId: !ImportValue ${self:provider.stage}-external-api-gw
+    restApiRootResourceId: !ImportValue ${self:provider.stage}-ext-api-gw-root-resource-id
+  tags:
+    STAGE: ${self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow # / Deny
+      Action:
+        -  #dynamodb:Query
+        -  #dax:GetItem
+        -  #sqs:SendMessage
+      Resource:
+        -  #!ImportValue ${self:provider.stage}-external-demo-resource-arn
+custom:
+  webpack:
+    includeModules:
+      forceExclude:
+        - aws-sdk
+  developerStage: ${env:DEVELOPER_IDENTIFIER,'local'}
+  dynamoDB:
+    deletionPolicy:
+      production: 'Retain'
+      staging: 'Retain'
+      default: 'Delete'
+
+resources:
+  Resources:
+    # DEMO SQS
+    DemoQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:provider.stage}-demo-users-queue
+     # DEMO DYNAMO DB
+    TemplateDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: ${self:custom.dynamoDB.deletionPolicy.${self:provider.stage}, self:custom.dynamoDB.deletionPolicy.default}
+      Properties:
+        TableName: ${self:provider.stage}-demo-template-table
+        AttributeDefinitions:
+          - AttributeName: 'templateId'
+            AttributeType: 'S'
+        KeySchema:
+          - AttributeName: 'templateId'
+            KeyType: 'HASH'
+        BillingMode: 'PAY_PER_REQUEST'
+        Tags:
+          - Key: STAGE
+            Value: ${self:provider.stage}
+  Outputs:
+    DynamoDBNotificationsTableName:
+      Value: !Ref TemplateDynamoDBTable
+      Export:
+        Name: ${self:provider.stage}-external-demo-template-table-name
+
+functions:
+  <fun1>: #function name
+    handler: services/v1/ #function handler path
+    environment:
+      DEMO_ENV_L: "this variable is available only for this lambda"
+    events:
+      - http:
+          path: #users/v1/user -- path for the resource
+          method: post # get put or delete
+          authorizer:
+            authorizerId: !ImportValue ${self:provider.stage}-external-authorizer
