@@ -3,6 +3,7 @@ service: devrefactory-lambda-template # Project name
 plugins:
   - serverless-webpack # Package our functions with Webpack
   - serverless-offline # Run locally
+  - serverless-cloudside-plugin # Run locally
 
 package:
   individually: true
